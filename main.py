@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.responses import HTMLResponse
+import asyncio
 
 app = FastAPI()
 
@@ -114,6 +115,14 @@ async def get_items():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
   await websocket.accept()
+  await websocket.send_json({
+    "channel": 2,
+    "data": "Welcome to AutoPro WebSocket Server!"
+    }
+  )
+  
   while True:
-    message = await websocket.receive_text()
-    await websocket.send_text(f"Message text was: {message}")
+    json = await websocket.receive_json()
+    await websocket.send_json(json)
+    
+    
